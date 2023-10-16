@@ -10,7 +10,7 @@ assessmentButton.onclick = () => {
     // 名前が空の時は処理を終了する
     return;
   }
-  
+
   // 診断結果表示エリアの作成
   resultDivision.innerText = '';
   const header = document.createElement('h3');
@@ -25,7 +25,7 @@ assessmentButton.onclick = () => {
   // ツイートエリアの作成
   tweetDivision.innerText = '';
   const anchor = document.createElement('a');
-  const hrefValue = 
+  const hrefValue =
     'https://twitter.com/intent/tweet?button_hashtag=' +
     encodeURIComponent('あなたのいいところ') +
     '&ref_src=twsrc%5Etfw';
@@ -40,12 +40,6 @@ assessmentButton.onclick = () => {
   const script = document.createElement('script');
   script.setAttribute('src', 'https://platform.twitter.com/widgets.js');
   tweetDivision.appendChild(script);
-};
-
-userNameInput.onkeydown = event => {
-  if (event.key === 'Enter') {
-    assessmentButton.onclick();
-  }
 };
 
 const answers = [
@@ -64,28 +58,80 @@ const answers = [
   '###userName###のいいところは好奇心です。新しいことに向かっていく###userName###の心構えが多くの人に魅力的に映ります。',
   '###userName###のいいところは気配りです。###userName###の配慮が多くの人を救っています。',
   '###userName###のいいところはその全てです。ありのままの###userName###自身がいいところなのです。',
-  '###userName###のいいところは自制心です。やばいと思ったときにしっかりと衝動を抑えられる###userName###が皆から評価されています。',
-  '###userName###のいいところなんてものはありません。###userName###は大人しく死んでおきましょう。'
+  '###userName###のいいところは自制心です。やばいと思ったときにしっかりと衝動を抑えられる###userName###が皆から評価されています。'
 ];
+
 /**
  * 名前の文字列を渡すと診断結果を返す関数
  * @param {string} userName ユーザの名前
  * @return {string} 診断結果
  */
 function assessment(userName) {
-    let sumOfCharCode = 0;
-    for (let i = 0; i < userName.length; i++) {
-      sumOfCharCode = sumOfCharCode + userName.charCodeAt(i);
-    }
-    const index = sumOfCharCode % answers.length;
-    let result = answers[index];
-    result = result.replaceAll('###userName###', userName);
-    return result;
+  // 全文字のコード番号を取得してそれを足し合わせる
+  let sumOfCharCode = 0;
+  for (let i = 0; i < userName.length; i++) {
+    sumOfCharCode = sumOfCharCode + userName.charCodeAt(i);
   }
-  
-  // テストコード
+
+  // 文字のコード番号の合計を回答の数で割って添字の数値を求める
+  const index = sumOfCharCode % answers.length;
+  let result = answers[index];
+
+  result = result.replaceAll('###userName###', userName);
+  return result;
+}
+
+// テストを行う関数
+function test() {
+  console.log('診断結果の文章のテスト');
+
+  //太郎
+  console.log('太郎');
   console.assert(
     assessment('太郎') ===
-       '太郎のいいところは決断力です。太郎がする決断にいつも助けられる人がいます。',
-       '診断結果の文言の特定の部分を名前に置き換える処理が正しくないんだが。書き換えんじゃねえよカス'
+      '太郎のいいところは決断力です。太郎がする決断にいつも助けられる人がいます。',
+    '診断結果の文言の特定の部分を名前に置き換える処理が正しくありません。'
   );
+
+  //次郎
+  console.log('次郎');
+  console.assert(
+    assessment('次郎') ===
+      '次郎のいいところは自制心です。やばいと思ったときにしっかりと衝動を抑えられる次郎が皆から評価されています。',
+    '診断結果の文言の特定の部分を名前に置き換える処理が正しくありません。'
+  );
+
+  //花子
+  console.log('花子');
+  console.assert(
+    assessment('花子') ===
+      '花子のいいところはまなざしです。花子に見つめられた人は、気になって仕方がないでしょう。',
+    '診断結果の文言の特定の部分を名前に置き換える処理が正しくありません。'
+  );
+  
+  console.log('診断結果の文章のテスト終了');
+
+  console.log('同じ名前なら、同じ結果を出力することのテスト');
+
+  console.log('太郎');
+  console.assert(
+    assessment('太郎') === assessment('太郎'),
+    '入力が同じ名前なら同じ診断結果を出力する処理が正しくありません。'
+  )
+
+  console.log('次郎');
+  console.assert(
+    assessment('次郎') === assessment('次郎'),
+    '入力が同じ名前なら同じ診断結果を出力する処理が正しくありません。'
+  )
+
+  console.log('花子');
+  console.assert(
+    assessment('花子') === assessment('花子'),
+    '入力が同じ名前なら同じ診断結果を出力する処理が正しくありません。'
+  )
+
+  console.log('同じ名前なら、同じ結果を出力することのテスト終了');
+}
+
+test();
